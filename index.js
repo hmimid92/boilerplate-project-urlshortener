@@ -24,8 +24,11 @@ app.get('/api/hello', function(req, res) {
 
 app.use(bodyParser.urlencoded({extended: false}));
 
+let redirectedURL;
+
 app.post("/api/shorturl", (req,res) => {
   const originalURL = req.body.url;
+  redirectedURL = originalURL;
   try {
   const urlObject = new URL(originalURL);
   dns.lookup(urlObject.hostname, (err) => {
@@ -43,7 +46,7 @@ app.post("/api/shorturl", (req,res) => {
 app.get("/api/shorturl/:number?", (req,res) => {
     if( !Number.isNaN(Number(req.params.number))) {
       if(Number(req.params.number) !== 0) {
-        res.redirect('back');
+        res.redirect(redirectedURL);
       } else {
         res.json({ error: 'Wrong format' });
       } 
